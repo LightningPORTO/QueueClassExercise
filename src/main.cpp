@@ -39,7 +39,7 @@ public:
         // Lambda function checks if queue is full
         m_writeCondition.wait(lock, [this]() { return m_queue.size() < m_maxQueueSize; });
 
-        // Here que queue should have space
+        // Here the queue should have space
         // Add the new value to the queue
         m_queue.push(queueVal);
 
