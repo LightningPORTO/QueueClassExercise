@@ -31,11 +31,19 @@ public:
      */
     void Push(T queueVal)
     {
+        // Create an unique lock on the mutex. 
+        // Automatically released at the end of the function
         std::unique_lock<std::mutex> lock(m_mutex);
+
+        // Wait until lambda function returns true. 
+        // Lambda function checks if queue is full
         m_writeCondition.wait(lock, [this]() { return m_queue.size() < m_maxQueueSize; });
 
+        // Here que queue should have space
+        // Add the new value to the queue
         m_queue.push(queueVal);
 
+        // Notify other thread to proceed, unlocking it 
         m_readCondition.notify_one();
     }
 
@@ -47,12 +55,19 @@ public:
      */
     T Pop()
     {
+        // Create an unique lock on the mutex. 
+        // Automatically released at the end of the function
         std::unique_lock<std::mutex> lock(m_mutex);
+
+        // Wait until lambda function returns true. 
+        // Lambda function checks if queue is NOT empty
         m_readCondition.wait(lock, [this]() { return !m_queue.empty(); });
 
+        // Here the queue should not be empty so we can remove a value
         T queueVal = m_queue.front();
         m_queue.pop();
 
+        // Notify other thread to proceed, unlocking it
         m_writeCondition.notify_one();
         return queueVal;
     }
