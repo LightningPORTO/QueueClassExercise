@@ -16,10 +16,14 @@ public:
     /**
      * @brief - Construct a new Queue object
      * 
-     * @param size - Maximum size of the queue
+     * @param size - Maximum size of the queue, must be greater than 0
      */
     Queue(int size)
     {
+        if (size <= 0)
+        {
+            throw std::invalid_argument("Max size must be greater than 0");
+        }
         m_maxQueueSize = size;
     }
 

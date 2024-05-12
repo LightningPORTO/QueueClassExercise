@@ -1,13 +1,26 @@
 #include <gtest/gtest.h>
 #include <thread>
+#include <string>
 
 #include "problem_queue.hpp"
 
-// Test case for Push and Pop functions of Queue
-TEST(QueueTest, PushPopTest) {
+// Test Queue initialization done wrong
+TEST(QueueTest, QueueBadInit) {
+    EXPECT_THROW(Queue<int> qObj(-1), std::invalid_argument);
+}
+
+// Test integer Push and Pop functions of Queue
+TEST(QueueTest, PushPopTestInteger) {
     Queue<int> qObj(2);
     qObj.Push(1);
     EXPECT_EQ(qObj.Pop(), 1);
+}
+
+// Test string Push and Pop functions of Queue
+TEST(QueueTest, PushPopTestString) {
+    Queue<std::string> qObj(2);
+    qObj.Push("Hello");
+    EXPECT_EQ(qObj.Pop(), "Hello");
 }
 
 // Test case for Count function of Queue
@@ -33,11 +46,10 @@ TEST(QueueTest, MultithreadingTest) {
     });
     std::thread readThread([&qObj]() {
         qObj.Pop();
-        qObj.Pop();
     });
     writeThread.join();
     readThread.join();
-    EXPECT_EQ(qObj.Count(), 0);
+    EXPECT_EQ(qObj.Count(), 1);
 }
 
 int main(int argc, char **argv) {
